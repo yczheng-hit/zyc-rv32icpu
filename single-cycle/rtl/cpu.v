@@ -12,7 +12,6 @@ module cpu (input clk,
             output wire [31:0] pc_cur,
             output wire [37:0] debug_inst);
     
-    
     // variable define
     // fetch
     wire [31:0] pc_alu_in;
@@ -20,7 +19,6 @@ module cpu (input clk,
     wire [31:0] pc_reg;
     wire [31:0] pc_next;
     wire [31:0] pc_dest;
-    wire pc_mux;
     wire [31:0] inst;
     
     // decode
@@ -49,15 +47,9 @@ module cpu (input clk,
     wire [31:0] data1_out;
     wire [31:0] data2_out;
     
-    
-    
-    
     // execute
     wire [31:0] out;
     wire alu_jmp;
-    
-    
-    
     
     // memory access
     wire [2:0] mem_len;
@@ -68,9 +60,7 @@ module cpu (input clk,
     wire write_reg_mux;
     wire [31:0] write_reg_out;
     
-    
     // write back
-    
     
     // debug
     assign debug_write_mem    = write_mem;
@@ -87,7 +77,6 @@ module cpu (input clk,
     end
     
     // fetch
-    assign pc_mux     = 1'b0;
     // assign pc_dest = 32'd0;
     
     pc_alu u_pc_alu(
@@ -104,14 +93,6 @@ module cpu (input clk,
     .data_out (pc_alu_in)
     );
     
-    // data_mux u_pc_mux(
-    // 	.data_in1 (data_in1),
-    //     .data_in0 (pc_cur),
-    //     .mux      (alu_jmp),
-    //     .data_out (data_out)
-    // );
-    
-    
     pc u_pc(
     .clk     (clk),
     .rst_n   (rst_n),
@@ -124,7 +105,6 @@ module cpu (input clk,
     .addr  (pc_cur[16:0]),
     .rdata (inst)
     );
-    
     
     // decode
     decode u_decode(
@@ -142,16 +122,12 @@ module cpu (input clk,
     .write_mem      (write_mem),
     .write_reg      (write_reg),
     .write_reg_mux  (write_reg_mux),
-    .pc_mux         (pc_mux),
     .mem_wea        (mem_wea),
     .mem_len        (mem_len),
     .pc_imm         (pc_imm),
     .imm_data       (imm_data),
     .debug_inst     (debug_inst)
     );
-    
-    
-    
     
     regfile u_regfile(
     .clk         (clk),
@@ -166,8 +142,6 @@ module cpu (input clk,
     .debug_reg   (debug_reg)
     );
     
-    
-    
     data_mux u_data_mux_0(
     .data_in1 (pc_cur),
     .data_in0 (rdata1),
@@ -175,14 +149,12 @@ module cpu (input clk,
     .data_out (data1_out)
     );
     
-    
     data_mux u_data_mux_1(
     .data_in1   (rdata2),
     .data_in0   (imm_data),
     .mux    (reg_src),
     .data_out   (data2_out)
     );
-    
     
     // execute
     alu u_alu(
@@ -193,8 +165,6 @@ module cpu (input clk,
     .out         (out)
     );
     
-    
-    
     // memory access
     mem_ext u_mem_ext_0(
     .data_in        (rdata2),
@@ -202,7 +172,6 @@ module cpu (input clk,
     .mem_signed_ext (1'b0),
     .data_out       (mem_in)
     );
-    
     
     ram_data u_ram_data(
     .clk   (clk),
@@ -233,8 +202,6 @@ module cpu (input clk,
     .data_out       (mem_to_reg)
     );
     
-    
-    
     // write back
     write_reg_mux u_write_reg_mux(
     .alu_out       (out),
@@ -242,11 +209,5 @@ module cpu (input clk,
     .write_reg_mux (write_reg_mux),
     .write_reg_out (write_reg_out)
     );
-    
-    
-    
-    
-    
-    
     
 endmodule
