@@ -1,0 +1,11 @@
+功能实现：
+使用ELFIO库实现ELF文件加载
+使用cxxopts实现命令行参数解析
+
+RV32i 37条指令
+trace记录 根据命令行写入指定文件
+debug开关 打印输出路径
+
+实现socket server api接口 用于与模拟器difftest
+
+

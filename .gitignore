@@ -1,0 +1,11 @@
+sim_main
+main
+*.o
+trace
+obj_dir
+.vscode
+*.asm
+*.bin
+*.hex
+*.elf
+*.vcd

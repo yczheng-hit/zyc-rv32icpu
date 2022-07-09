@@ -1,0 +1,9 @@
+server端和client端
+用socket进行TCP通信
+用google的protobuf协议 proto2
+
+每次根据类型检查
+PC
+写入寄存器号 和 写入数值
+写入地址 和 写入数值
+跳转地址

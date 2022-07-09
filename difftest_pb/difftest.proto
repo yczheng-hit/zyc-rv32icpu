@@ -1,0 +1,25 @@
+syntax = "proto2";
+package difftest;
+
+message Difftest {
+	required uint32 pc = 1;
+	
+	enum InstType {
+		WRITE_REG 	= 0;
+		WRITE_MEM 	= 1;
+		CHECK_REG 	= 2;
+		BRANCH	 	= 3;
+	}
+	
+	required InstType type = 4 [default = WRITE_REG];
+	optional uint32 dest_reg = 5;
+	
+	message Reigster {
+		required uint32 id 	= 6;
+	    required uint32 data = 7;
+	}
+	repeated Reigster regs = 8;
+
+	optional uint32 dest_addr = 9;
+	optional uint32 dest_data = 10;
+}
