@@ -25,7 +25,6 @@ module cpu (input clk,
     wire [19:0] inst_opcode;
     wire [4:0] rs1;
     wire [4:0] rs2;
-    wire [4:0] shamt;
     wire [4:0] rd;
     wire write_reg;
     wire write_pc;
@@ -112,7 +111,6 @@ module cpu (input clk,
     .inst_opcode    (inst_opcode),
     .rs1            (rs1),
     .rs2            (rs2),
-    .shamt          (shamt),
     .rd             (rd),
     .reg_src        (reg_src),
     .mem_signed_ext (mem_signed_ext),
