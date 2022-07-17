@@ -8,6 +8,7 @@
 int server_init(void);
 // int server_communication();
 uint32_t server_communication();
+void server_response(char * buf2client,int nbuf2client);
 int server_close(void);
 extern difftest::Difftest data4server;
 #endif

@@ -23,6 +23,7 @@
 difftest::Difftest data4server;
 int listenfd, connfd;
 char buf[BUF_SIZE];
+int nbuf;
 int server_init(void)
 {
     if ((listenfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
@@ -59,11 +60,12 @@ int server_init(void)
 
 uint32_t server_communication()
 {
-    int nbuf;
     nbuf = recv(connfd, buf, BUF_SIZE, 0);
     std::string dese_str(buf, nbuf);
     if (cpu->verbose)
         std::cout << "-------------" << std::endl;
+    if(dese_str == "")
+        return 1;
     if (!data4server.ParseFromString(dese_str))
     {
         std::cerr << "Failed to parse student." << std::endl;
@@ -125,16 +127,23 @@ uint32_t server_communication()
             std::cout << i << " reg id: " << reg.id() << " reg data:" << reg.data() << std::endl;
         cpu->regs_cli.regs[reg.id()] = (uint32_t)reg.data();
     }
-
-    buf[0] = 'O';
-    buf[1] = 'K';
-    buf[2] = 0;
-    nbuf = 3;
-    send(connfd, buf, nbuf, 0);
+    // server_response("OK",3);
+    // buf[0] = 'O';
+    // buf[1] = 'K';
+    // buf[2] = 0;
+    // nbuf = 3;
+    // send(connfd, buf, nbuf, 0);
 
     // google::protobuf::ShutdownProtobufLibrary();
 
     return 0;
+}
+
+void server_response(char * buf2client,int nbuf2client)
+{
+    // strcpy(buf,buf2client);
+    // nbuf = 3;
+    send(connfd, buf2client, nbuf2client, 0);
 }
 
 int server_close()

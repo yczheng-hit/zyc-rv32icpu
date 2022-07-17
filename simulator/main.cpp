@@ -133,6 +133,7 @@ void write_back(void)
 
 void main_loop(void)
 {
+    int ser_flag = 0;
     cpu->running = true;
 
     while (cpu->running)
@@ -144,8 +145,13 @@ void main_loop(void)
         write_back();
         if (cpu->diff)
         {
-            if (server_communication())
+            ser_flag = server_communication();
+            if (ser_flag == -1)
                 my_exit(EXIT_FAILURE);
+            else if(ser_flag == 1){
+                printf("Client Socket Closed!\n");
+                my_exit(EXIT_SUCCESS);
+            }
             if (cpu->regs_cli.PC != cpu->regs.PC)
             {
                 printf("ERROR!: PC dismatch!\n");
@@ -157,11 +163,13 @@ void main_loop(void)
             case WRITE_REG:
                 if ((cpu->regs.regs[cpu->regid_cli] == cpu->data_cli) && (cpu->regid_cli == cpu->regs.destReg))
                 {
+                    server_response("OK",3);
                     if (cpu->verbose)
                         printf("pc:%04x id:%d data match! data:0x%08x\n", cpu->regs_cli.PC, cpu->regid_cli, cpu->data_cli);
                 }
                 else
                 {
+                    server_response("ERROR!",7);
                     printf("ERROR!: data dismatch!\n");
                     printf("PC: 0x%08x simulator data:0x%08x id:%d\t cpu data:0x%08x id:%d\t", cpu->regs.PC, cpu->regs.regs[cpu->regid_cli], cpu->regs.destReg, cpu->data_cli, cpu->regid_cli);
                     my_exit(EXIT_FAILURE);
@@ -170,22 +178,26 @@ void main_loop(void)
             case WRITE_MEM:
                 if (!cpu->mmio.writeMem)
                 {
+                    server_response("ERROR!",7);
                     printf("ERROR!: option dismatch! write_mem expected\n");
                     my_exit(EXIT_FAILURE);
                 }
                 if ((cpu->mmio.out == cpu->addr_cli) && ((cpu->mmio.op2 & MEM_LEN(cpu->mmio.memLen)) == cpu->data_cli))
                 {
+                    server_response("OK",3);
                     if (cpu->verbose)
                         printf("store addr:0x%08x data match! data:0x%08x\n", cpu->addr_cli, cpu->data_cli);
                 }
                 else
                 {
+                    server_response("ERROR!",7);
                     printf("ERROR!: addr/data dismatch!\n");
                     printf("PC: 0x%08x\t simulator addr:0x%08x data:0x%08x cpu  addr:0x%08x data:0x%08x", cpu->regs.PC, cpu->mmio.out, cpu->mmio.op2, cpu->addr_cli, cpu->data_cli);
                     my_exit(EXIT_FAILURE);
                 }
                 break;
             case BRANCH:
+                server_response("OK",3);
                 if (cpu->verbose)
                     printf("Branch happened!\tsimulator PC: 0x%08x\t CPU PC: 0x%08x\t", cpu->regs.PC, cpu->regs_cli.PC);
                 break;
