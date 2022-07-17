@@ -194,7 +194,7 @@ inst_jal | inst_jalr |
 inst_lui | inst_auipc;
 // S
 assign write_mem = inst_sb | inst_sh | inst_sw;
-assign mem_len = (inst_sb|inst_lb|inst_lbu) | (inst_sh|inst_lh|inst_lhu)<<1 | (inst_sw|inst_lw)<<2;
+assign mem_len = {(inst_sw|inst_lw), (inst_sh|inst_lh|inst_lhu),(inst_sb|inst_lb|inst_lbu)};
 assign mem_signed_ext = inst_lb | inst_lh | inst_lw;
 assign mem_wea = inst_sw ? 4'b1111 :
                 inst_sh ? 4'b0011 :
